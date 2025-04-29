@@ -116,50 +116,8 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         env:
-        {{- if .Values.ollamaUrlsFromExtraEnv}}
-        {{- else if or .Values.ollamaUrls .Values.ollama.enabled }}
-        - name: "OLLAMA_BASE_URLS"
-          value: {{ include "ollamaBaseUrls" . | quote }}
-        {{- else }}
-        - name: "ENABLE_OLLAMA_API"
-          value: "False"
-        {{- end }}
-        {{- if and .Values.enableOpenaiApi .Values.openaiBaseApiUrl (not .Values.openaiBaseApiUrls) (not .Values.pipelines.enabled) }}
-        # If only an OpenAI API value is set, set it to OPENAI_API_BASE_URL
-        - name: "OPENAI_API_BASE_URL"
-          value: {{ .Values.openaiBaseApiUrl | quote }}
-        {{- else if and .Values.enableOpenaiApi .Values.openaiBaseApiUrl .Values.pipelines.enabled (not .Values.openaiBaseApiUrls) }}
-        # If Pipelines is enabled and OpenAI API value is set, use OPENAI_API_BASE_URLS with combined values
-        - name: "OPENAI_API_BASE_URLS"
-          value: "{{ include "pipelines.serviceEndpoint" . }};{{ .Values.openaiBaseApiUrl }}"
-        {{- else if and .Values.enableOpenaiApi .Values.pipelines.enabled (not .Values.openaiBaseApiUrl) (not .Values.openaiBaseApiUrls) }}
-        # If Pipelines is enabled and no OpenAI API values are set, set OPENAI_API_BASE_URL to the Pipelines server endpoint 
-        - name: "OPENAI_API_BASE_URL"
-          value: {{ include "pipelines.serviceEndpoint" . | quote }}
-        {{- else if and .Values.enableOpenaiApi .Values.openaiBaseApiUrls .Values.pipelines.enabled }}
-        # If OpenAI API value(s) set and Pipelines is enabled, use OPENAI_API_BASE_URLS to support all the endpoints in the chart
-        - name: "OPENAI_API_BASE_URLS"
-          value: "{{ include "pipelines.serviceEndpoint" . }};{{ join ";" .Values.openaiBaseApiUrls }}"
-        {{- else if not .Values.enableOpenaiApi }}
-        - name: "ENABLE_OPENAI_API"
-          value: "False"
-        {{- end }}
         {{- if .Values.extraEnvVars }}
           {{- toYaml .Values.extraEnvVars | nindent 8 }}
-        {{- end }}
-        {{- if .Values.tika.enabled }}
-        - name: "CONTENT_EXTRACTION_ENGINE"
-          value: "Tika"
-        - name: "TIKA_SERVER_URL"
-          value: http://{{ .Chart.Name }}-tika:9998
-        {{- end }}
-        {{- if .Values.websocket.enabled }}
-        - name: "ENABLE_WEBSOCKET_SUPPORT"
-          value: "True"
-        - name: "WEBSOCKET_MANAGER"
-          value: {{ .Values.websocket.manager | default "redis" | quote }}
-        - name: "WEBSOCKET_REDIS_URL"
-          value: {{ .Values.websocket.url | quote }}
         {{- end }}
         tty: true
       {{- with .Values.nodeSelector }}
