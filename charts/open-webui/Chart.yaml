@@ -1,7 +1,7 @@
 apiVersion: v2
 name: open-webui
-version: 5.25.0
-appVersion: 0.5.20
+version: 1.0.0
+appVersion: 1.5.1
 home: https://www.openwebui.com/
 icon: https://raw.githubusercontent.com/open-webui/open-webui/main/static/favicon.png
 description: 'Open WebUI: A User-Friendly Web Interface for Chat Interactions'
@@ -12,5 +12,5 @@ keywords:
   - open-webui
 sources:
   - https://github.com/open-webui/open-webui
-annotations:
-  licenses: MIT
+  - https://github.com/NotYuSheng/open-webui_secure
+  - https://github.com/NotYuSheng/open-webui_webwork

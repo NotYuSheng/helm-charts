@@ -17,12 +17,23 @@ git clone https://github.com/NotYuSheng/helm-charts
 cd helm-charts
 ```
 
-2. Start up instruction
+2. Start Openshift CRC (Refer to [CRC Setup Guide](#crc-setup-guide) if crc project not configured)
 ```
-helm install open-webui ./open-webui -f ./charts/open-webui/values.yaml
+crc start
 ```
 
-3. Shut down instruction
+3. Helm Start up instruction
+```
+helm install open-webui ./charts/open-webui -f ./charts/open-webui/values.yaml
+```
+
+4. Helm Shut down instruction
 ```
 helm uninstall open-webui
 ```
+
+### CRC Setup Guide
+
+1. Follow this guide to setup CRC: https://www.redhat.com/en/blog/codeready-containers
+
+2. Create the open-webui project

@@ -1,39 +1,18 @@
 nameOverride: ""
 namespaceOverride: ""
 
-ollama:
-  enabled: false
-
-pipelines:
-  enabled: false
-
-tika:
-  enabled: false
-
-ollamaUrls: []
-ollamaUrlsFromExtraEnv: false
-
-websocket:
-  enabled: false
-  manager: redis
-  url: redis://open-webui-redis:6379/0
-  redis:
-    enabled: false  # disable deploying Redis too if websocket is off
-
-redis-cluster:
-  enabled: false
-
 clusterDomain: cluster.local
 
 annotations: {}
 podAnnotations: {}
 podLabels: {}
+
 replicaCount: 1
 strategy: {}
 
 image:
-  repository: ghcr.io/notyusheng/open-webui_secure
-  tag: "v1.4"  # TODO: Change this to newest version
+  repository: ghcr.io/notyusheng/open-webui_webwork
+  tag: "v1.5.1"
   pullPolicy: "Never"
 
 serviceAccount:
@@ -43,10 +22,6 @@ serviceAccount:
   automountServiceAccountToken: false
 
 imagePullSecrets: []
-
-livenessProbe: {}
-readinessProbe: {}
-startupProbe: {}
 
 resources: {}
 
@@ -85,20 +60,6 @@ service:
   labels: {}
   loadBalancerClass: ""
 
-enableOpenaiApi: false
-openaiBaseApiUrl: ""
-openaiBaseApiUrls: []
-
-extraEnvVars: []
-
 volumeMounts:
   initContainer: []
   container: []
-
-extraInitContainers: []
-volumes: []
-
-podSecurityContext: {}
-containerSecurityContext: {}
-
-extraResources: []
