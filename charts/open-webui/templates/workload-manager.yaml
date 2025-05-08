@@ -116,9 +116,32 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         env:
-        {{- if .Values.extraEnvVars }}
-          {{- toYaml .Values.extraEnvVars | nindent 8 }}
-        {{- end }}
+          {{- /* first, inject any extraEnvVars */}}
+          {{- if .Values.extraEnvVars }}
+          {{- range .Values.extraEnvVars }}
+          - name: {{ .name | quote }}
+            value: {{ .value | quote }}
+          {{- end }}
+          {{- end }}
+
+          {{- /* then, the Keycloak/OIDC settings */}}
+          {{- if .Values.keycloak.enabled }}
+          - name: OAUTH_CLIENT_ID
+            value: {{ .Values.keycloak.clientId | quote }}
+          - name: OAUTH_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "open-webui.fullname" . }}-keycloak
+                key: client-secret
+          - name: OPENID_PROVIDER_URL
+            value: {{ printf "%s://%s:%d/realms/%s/.well-known/openid-configuration" 
+                      .Values.keycloak.protocol .Values.keycloak.host .Values.keycloak.port .Values.keycloak.realm 
+                      | quote }}
+          - name: OAUTH_PROVIDER_NAME
+            value: {{ .Values.keycloak.providerName | quote }}
+          - name: ENABLE_OAUTH_SIGNUP
+            value: {{ .Values.keycloak.enableSignup | quote }}
+          {{- end }}
         tty: true
       {{- with .Values.nodeSelector }}
       nodeSelector:

@@ -17,11 +17,22 @@ Set the name of the Open WebUI resources
 {{- end -}}
 
 {{/*
+Generate a full resource name by combining Release.Name and Chart.Name
+*/}}
+{{- define "open-webui.fullname" -}}
+  {{- if .Values.nameOverride -}}
+    {{- .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+  {{- else -}}
+    {{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
 Create the chart name and version for the chart label
 */}}
 {{- define "chart.name" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- end -}}
 
 {{/*
 Create the base labels to include on chart resources
@@ -32,7 +43,7 @@ helm.sh/chart: {{ include "chart.name" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
+{{- end -}}
 
 {{/*
 Create selector labels to include on all resources
@@ -47,7 +58,7 @@ Create selector labels to include on all Open WebUI resources
 {{- define "open-webui.selectorLabels" -}}
 {{ include "base.selectorLabels" . }}
 app.kubernetes.io/component: {{ .Chart.Name }}
-{{- end }}
+{{- end -}}
 
 {{/*
 Create labels to include on chart all Open WebUI resources
@@ -55,4 +66,4 @@ Create labels to include on chart all Open WebUI resources
 {{- define "open-webui.labels" -}}
 {{ include "base.labels" . }}
 {{ include "open-webui.selectorLabels" . }}
-{{- end }}
+{{- end -}}

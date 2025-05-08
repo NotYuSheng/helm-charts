@@ -63,3 +63,30 @@ service:
 volumeMounts:
   initContainer: []
   container: []
+
+podSecurityContext: {}
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10002
+  allowPrivilegeEscalation: false
+
+keycloak:
+  enabled: true
+
+  # TODO: Configure this section with Starlabs
+  clientId:       "webui-client"
+  clientSecret:   "HS5Qc5cTfCrt04h5f3gEFtyGkYRZfWul"
+
+  # Point at your managed Keycloak instance:
+  protocol:       "https"
+  host:           "auth.mycorp.com"
+  port:           "443"
+  realm:          "myrealm"
+
+  # Optional widget/display settings
+  providerName:   "Keycloak"
+  enableSignup:   false
+
+extraEnvVars:
+  - name: WEBUI_AUTH
+    value: "True"
