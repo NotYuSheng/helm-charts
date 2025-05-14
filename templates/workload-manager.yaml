@@ -58,7 +58,8 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- with .Values.copyAppData.resources }}
-        resources: {{- toYaml . | nindent 10 }}
+        resources:
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         volumeMounts:
         - name: data
@@ -70,16 +71,12 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.extraInitContainers }}
-      {{- toYaml . | nindent 6 }}
+      {{ toYaml . | nindent 6 }}
       {{- end }}
       enableServiceLinks: false
-      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
-      {{- if .Values.serviceAccount.enable }}
-      serviceAccountName: {{ .Values.serviceAccount.name | default (include "open-webui.name" .) }}
-      {{- end }}
       {{- with .Values.podSecurityContext }}
       securityContext:
-        {{- toYaml . | nindent 8 }}
+        {{ toYaml . | nindent 8 }}
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}
@@ -91,16 +88,20 @@ spec:
         - name: http
           containerPort: {{ .Values.service.containerPort }}
         {{- with .Values.livenessProbe }}
-        livenessProbe: {{- toYaml . | nindent 10 }}
+        livenessProbe:
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- with .Values.readinessProbe }}
-        readinessProbe: {{- toYaml . | nindent 10 }}
+        readinessProbe:
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- with .Values.startupProbe }}
-        startupProbe: {{- toYaml . | nindent 10 }}
+        startupProbe:
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- with .Values.resources }}
-        resources: {{- toYaml . | nindent 10 }}
+        resources:
+          {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- with .Values.containerSecurityContext }}
         securityContext:
@@ -116,32 +117,29 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         env:
-          {{- /* first, inject any extraEnvVars */}}
-          {{- if .Values.extraEnvVars }}
-          {{- range .Values.extraEnvVars }}
-          - name: {{ .name | quote }}
-            value: {{ .value | quote }}
-          {{- end }}
-          {{- end }}
-
-          {{- /* then, the Keycloak/OIDC settings */}}
-          {{- if .Values.keycloak.enabled }}
-          - name: OAUTH_CLIENT_ID
-            value: {{ .Values.keycloak.clientId | quote }}
-          - name: OAUTH_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "open-webui.fullname" . }}-keycloak
-                key: client-secret
-          - name: OPENID_PROVIDER_URL
-            value: {{ printf "%s://%s:%d/realms/%s/.well-known/openid-configuration" 
-                      .Values.keycloak.protocol .Values.keycloak.host .Values.keycloak.port .Values.keycloak.realm 
-                      | quote }}
-          - name: OAUTH_PROVIDER_NAME
-            value: {{ .Values.keycloak.providerName | quote }}
-          - name: ENABLE_OAUTH_SIGNUP
-            value: {{ .Values.keycloak.enableSignup | quote }}
-          {{- end }}
+        {{- if .Values.extraEnvVars }}
+        {{- range .Values.extraEnvVars }}
+        - name: {{ .name | quote }}
+          value: {{ .value | quote }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.keycloak.enabled }}
+        - name: OAUTH_CLIENT_ID
+          value: {{ .Values.keycloak.clientId | quote }}
+        - name: OAUTH_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "open-webui.fullname" . }}-keycloak
+              key: client-secret
+        - name: OPENID_PROVIDER_URL
+          value: {{ printf "%s://%s:%d/realms/%s/.well-known/openid-configuration" 
+                    .Values.keycloak.protocol .Values.keycloak.host .Values.keycloak.port .Values.keycloak.realm 
+                    | quote }}
+        - name: OAUTH_PROVIDER_NAME
+          value: {{ .Values.keycloak.providerName | quote }}
+        - name: ENABLE_OAUTH_SIGNUP
+          value: {{ .Values.keycloak.enableSignup | quote }}
+        {{- end }}
         tty: true
       {{- with .Values.nodeSelector }}
       nodeSelector:

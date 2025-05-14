@@ -11,15 +11,9 @@ replicaCount: 1
 strategy: {}
 
 image:
-  repository: ghcr.io/notyusheng/open-webui_webwork
-  tag: "v1.5.1"
-  pullPolicy: "Never"
-
-serviceAccount:
-  enable: true
-  name: ""
-  annotations: {}
-  automountServiceAccountToken: false
+  repository: image-registry.openshift-image-registry.svc:5000/open-webui/open-webui_webwork
+  tag: "v1.5.1-6b044964"
+  pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 
@@ -28,11 +22,9 @@ resources: {}
 copyAppData:
   resources: {}
 
-managedCertificate:
-  enabled: false
-
 ingress:
-  enabled: false
+  enabled: true
+  host: open-webui.apps-crc.testing
 
 persistence:
   enabled: true
@@ -67,8 +59,11 @@ volumeMounts:
 podSecurityContext: {}
 containerSecurityContext:
   runAsNonRoot: true
-  runAsUser: 10002
   allowPrivilegeEscalation: false
+
+extraEnvVars:
+  - name: WEBUI_AUTH
+    value: "False"
 
 keycloak:
   enabled: true
@@ -86,7 +81,3 @@ keycloak:
   # Optional widget/display settings
   providerName:   "Keycloak"
   enableSignup:   false
-
-extraEnvVars:
-  - name: WEBUI_AUTH
-    value: "True"
